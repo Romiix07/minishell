@@ -6,12 +6,13 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/25 11:03:29 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/05/25 16:01:49 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/09/15 15:03:00 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include <stdio.h>
+
 void	*ft_calloc(void **ptr, int size)
 {
 	if (size <= 0)

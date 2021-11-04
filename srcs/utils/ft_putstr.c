@@ -1,18 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isdigit.c                                       :+:      :+:    :+:   */
+/*   ft_putstr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romain <rmouduri@student.42.fr>            +#+  +:+       +#+        */
+/*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/16 14:25:23 by romain            #+#    #+#             */
-/*   Updated: 2020/11/16 14:26:30 by romain           ###   ########.fr       */
+/*   Created: 2021/10/08 17:26:11 by rmouduri          #+#    #+#             */
+/*   Updated: 2021/10/08 17:26:12 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_isdigit(int c)
+#include <unistd.h>
+#include "minishell.h"
+
+void	ft_putstr(char *str)
 {
-	if ((unsigned char)c >= '0' && (unsigned char)c <= '9')
-		return (1);
-	return (0);
+	int	i;
+
+	i = -1;
+	while (str[++i])
+	{
+		write(1, &str[i], 1);
+	}
 }

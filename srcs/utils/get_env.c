@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/25 15:30:23 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/05/27 14:24:45 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/10/28 15:41:13 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,9 +78,7 @@ t_env	*ft_envnew(char *s)
 int	free_env(t_env *env)
 {	
 	t_env	*tmp;
-	int		i;
 
-	i = -1;
 	while (env)
 	{
 		if (env->name)

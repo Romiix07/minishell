@@ -1,19 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isalpha.c                                       :+:      :+:    :+:   */
+/*   ft_putnbr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/16 14:22:00 by romain            #+#    #+#             */
-/*   Updated: 2021/05/20 15:53:31 by rmouduri         ###   ########.fr       */
+/*   Created: 2020/08/05 14:56:29 by rmouduri          #+#    #+#             */
+/*   Updated: 2021/10/28 17:24:03 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_isalpha(int c)
+#include <unistd.h>
+
+static void	ft_putchar(char c, int fd)
 {
-	if (((unsigned char)c >= 'a' && (unsigned char)c <= 'z')
-		|| ((unsigned char)c >= 'A' && (unsigned char)c <= 'Z'))
-		return (1);
-	return (0);
+	write(fd, &c, 1);
+}
+
+void	ft_putnbr_fd(int nb, int fd)
+{
+	if (nb < 0 && nb != -2147483648)
+	{
+		write(fd, "-", 1);
+		nb *= -1;
+	}
+	if (nb > 9)
+		ft_putnbr_fd(nb / 10, fd);
+	if (nb != -2147483648)
+		ft_putchar((nb % 10) + 48, fd);
+	else
+		write(fd, "-2147483648", 11);
 }

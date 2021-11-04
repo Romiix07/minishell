@@ -5,79 +5,125 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/31 11:24:54 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/06/01 11:28:13 by rmouduri         ###   ########.fr       */
+/*   Created: 2021/10/28 13:39:15 by rmouduri          #+#    #+#             */
+/*   Updated: 2021/10/28 15:36:42 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include "minishell.h"
 
-static int	error_export(char *s)
+static int	check_argv(int ac, char **av)
 {
-	write(2, "minishell: export: << ", 22);
-	write(2, s, ft_strlen(s));
-	write(2, " >> : indentifiant non valable\n", 31);
-	return (0);
+	int	i;
+
+	i = -1;
+	while (++i < ac - 1)
+		if (ft_strcmp(av[i], av[i + 1]) > 0)
+			return (0);
+	return (1);
 }
 
-static int	check_arg_export(char **input)
+static char	**tab_dup(char **tab)
 {
 	int		i;
+	int		len;
+	char	**ret;
 
-	i = 0;
-	if (!input[1][i])
+	len = 0;
+	while (tab[len])
+		++len;
+	i = -1;
+	ret = malloc(sizeof(char *) * (len + 1));
+	if (!ret)
 		return (0);
-	while (input[1][i] && input[1][i] != '=')
+	while (++i < len)
 	{
-		if (!ft_isalnum(input[1][i]) && input[1][i] != '_')
+		ret[i] = ft_strdup(tab[i]);
+		if (!ret[i])
+		{
+			free_tab(ret, i);
 			return (0);
-		++i;
+		}
 	}
-	if (input[1][i] == '=')
-		return (1);
+	ret[i] = 0;
+	return (ret);
+}
+
+static int	sort_print_env(char **env, int len)
+{
+	int		i;
+	char	*tmp;
+
+	while (!check_argv(len, env))
+	{
+		i = -1;
+		while (++i < len - 1)
+		{
+			if (ft_strcmp(env[i], env[i + 1]) > 0)
+			{
+				tmp = env[i];
+				env[i] = env[i + 1];
+				env[i + 1] = tmp;
+			}
+		}
+	}
+	print_env_export(env);
 	return (0);
 }
 
-t_env	*get_env_var(char *s, t_env *env)
+static int	export_val(char *tab)
 {
-	t_env	*tmp;
+	int		j;
+	t_env	*node;
 
-	tmp = env;
-	while (tmp)
+	j = -1;
+	while (tab[++j] && tab[j] != '=')
 	{
-		if (!ft_strcmp(tmp->name, s))
-			return (tmp);
-		tmp = tmp->next;
+		if (tab[j] != '_' && !ft_isalnum(tab[j]))
+		{
+			return_error("minishell: export", tab,
+				"not a valid identifier", 1);
+			break ;
+		}
+		else if (tab[j + 1] == '=' || !tab[j + 1])
+		{
+			node = ft_envnew(tab);
+			if (!node)
+				return (return_error("export: Can't malloc", 0, 0, 1));
+			else if (!ft_setenv(node->name, node->var))
+				return_error("export: Can't set", node->name, 0, 1);
+			free_node(node);
+		}
 	}
 	return (0);
 }
 
-int	ft_export(char **input, t_env *env)
+int	ft_export(void)
 {
-	t_env	*arg;
-	char	*name;
+	int		len;
+	int		ret;
+	char	**env;
 
-	// if (input && input[0] && !input[1])
-		// export_no_arg(input);
-	if (!check_arg_export(input))
-		return (1 + error_export(input[1]));
-	name = init_env_name(input[1]);
-	if (!name)
-		return (1);
-	arg = get_env_var(name, env);
-	if (arg)
+	if (!g_shell->fct[1])
 	{
-		if (arg->var)
-			free(arg->var);
-		arg->var = init_env_var(input[1]);
+		len = 0;
+		while (g_shell->char_env[len])
+			++len;
+		env = tab_dup(g_shell->char_env);
+		if (!env)
+			return (return_error("export: Can't malloc", 0, 0, 1));
+		return (sort_print_env(env, len));
 	}
 	else
 	{
-		env->next = ft_envnew(input[1]);
-		if (!env->next)
-			return (1);
+		len = -1;
+		ret = 0;
+		while (g_shell->fct[++len + 1])
+			if (export_val(g_shell->fct[len + 1]) == 1)
+				ret = 1;
+		return (ret);
 	}
 	return (0);
 }

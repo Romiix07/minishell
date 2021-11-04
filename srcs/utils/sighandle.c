@@ -1,20 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   unset.c                                            :+:      :+:    :+:   */
+/*   sighandle.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/27 17:26:31 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/10/27 17:29:52 by rmouduri         ###   ########.fr       */
+/*   Created: 2021/11/02 11:28:37 by user42            #+#    #+#             */
+/*   Updated: 2021/11/03 13:36:41 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include <unistd.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <signal.h>
 
-int	ft_unset(void)
+void	sighandler(void)
 {
-	if (g_shell->fct[1])
-		del_env_node(g_shell->env, g_shell->fct[1]);
-	return (0);
+	rl_on_new_line();
+	write(1, "\n", 1);
+	rl_replace_line("", 0);
+	rl_redisplay();
 }

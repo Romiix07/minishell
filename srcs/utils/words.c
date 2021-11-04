@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/25 12:21:54 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/05/26 12:56:30 by rmouduri         ###   ########.fr       */
+/*   Created: 2021/10/08 17:25:22 by rmouduri          #+#    #+#             */
+/*   Updated: 2021/10/08 17:26:53 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@ char	*get_quote(char **ret, char *s, int *i, char c)
 	++(*i);
 	while (s[*i] && s[*i] != c)
 		(*ret)[++j] = s[(*i)++];
-	(*ret)[++j] = c;
+	if (s[*i] == c)
+		(*ret)[++j] = c;
 	(*ret)[++j] = 0;
 	if (s[*i])
 		++(*i);

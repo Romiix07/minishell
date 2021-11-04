@@ -1,18 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_isascii.c                                       :+:      :+:    :+:   */
+/*   quote_checks.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romain <rmouduri@student.42.fr>            +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/16 15:34:17 by romain            #+#    #+#             */
-/*   Updated: 2020/11/16 15:35:01 by romain           ###   ########.fr       */
+/*   Created: 2021/10/08 17:27:32 by rmouduri          #+#    #+#             */
+/*   Updated: 2021/10/22 11:17:06 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_isascii(int c)
+#include "minishell.h"
+
+int	quote_check(char *arg, int index)
 {
-	if ((unsigned char)c >= 0 && (unsigned char)c <= 127)
-		return (1);
+	char	c;
+
+	c = arg[index];
+	while (arg[++index])
+	{
+		if (arg[index] == c)
+		{
+			return (1);
+		}
+	}
 	return (0);
 }

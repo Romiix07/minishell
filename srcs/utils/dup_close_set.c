@@ -1,20 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   unset.c                                            :+:      :+:    :+:   */
+/*   dup_close_set.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/27 17:26:31 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/10/27 17:29:52 by rmouduri         ###   ########.fr       */
+/*   Created: 2021/10/15 19:38:37 by rmouduri          #+#    #+#             */
+/*   Updated: 2021/10/28 18:31:37 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include <unistd.h>
 
-int	ft_unset(void)
+int	dup_close_set(int fd1, int fd2, int val)
 {
-	if (g_shell->fct[1])
-		del_env_node(g_shell->env, g_shell->fct[1]);
-	return (0);
+	if (dup2(fd1, fd2) == -1)
+		return (0);
+	close(fd1);
+	fd1 = val;
+	return (1);
 }

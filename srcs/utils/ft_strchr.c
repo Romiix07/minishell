@@ -1,20 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   unset.c                                            :+:      :+:    :+:   */
+/*   ft_strchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: romain <rmouduri@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/27 17:26:31 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/10/27 17:29:52 by rmouduri         ###   ########.fr       */
+/*   Created: 2020/11/16 16:06:08 by romain            #+#    #+#             */
+/*   Updated: 2020/11/21 20:09:02 by romain           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include <stddef.h>
 
-int	ft_unset(void)
+char	*ft_strchr(const char *s, int c)
 {
-	if (g_shell->fct[1])
-		del_env_node(g_shell->env, g_shell->fct[1]);
-	return (0);
+	int	i;
+
+	i = 0;
+	while (s[i] && s[i] != c)
+		++i;
+	if (s[i] == c)
+		return ((char *)&s[i]);
+	return (NULL);
 }

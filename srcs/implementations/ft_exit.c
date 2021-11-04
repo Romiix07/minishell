@@ -1,42 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/19 14:40:46 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/03 23:10:46 by rmouduri         ###   ########.fr       */
+/*   Created: 2021/10/08 17:28:14 by rmouduri          #+#    #+#             */
+/*   Updated: 2021/11/02 13:50:12 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <signal.h>
 #include "minishell.h"
 
-t_shell	*g_shell;
-
-int	main(__attribute__((unused))int ac, __attribute__((unused))
-		char **av, char **env)
+void	ft_exit(void)
 {
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGINT, sighandler);
-	if (!env)
-		return (1);
-	if (init_shell(env) == 1)
-		return (1);
-	while (1)
+	int	i;
+
+	i = 0;
+	write(STDERR_FILENO, "exit\n", 5);
+	if (g_shell->fct && g_shell->fct[1])
 	{
-		while (!g_shell->input)
-			g_shell->input = get_input();
-		go_to_function();
-		free_tab(g_shell->input, -1);
-		g_shell->input = 0;
-		free(g_shell->ops);
+		if (g_shell->input[1][0] == '-')
+			++i;
+		while (g_shell->input[1][i]
+			&& is_charset(g_shell->input[1][i], "0123456789"))
+			++i;
+		if (g_shell->input[1][i] != 0)
+			return_error("minishell: exit", g_shell->input[1],
+				"numeric argument required", 0);
+		else
+			i = ft_atoi(g_shell->input[1]);
 	}
-	if (g_shell)
-		free_shell();
-	return (0);
+	free_shell();
+	exit(i);
 }
