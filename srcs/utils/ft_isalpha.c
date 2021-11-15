@@ -1,25 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*   ft_isalpha.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: romain <rmouduri@student.42.fr>            +#+  +:+       +#+        */
+/*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/16 16:06:08 by romain            #+#    #+#             */
-/*   Updated: 2020/11/21 20:09:02 by romain           ###   ########.fr       */
+/*   Created: 2021/11/09 17:19:55 by rmouduri          #+#    #+#             */
+/*   Updated: 2021/11/09 17:20:12 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
-
-char	*ft_strchr(const char *s, int c)
+int	ft_isalpha(int c)
 {
-	int	i;
-
-	i = 0;
-	while (s[i] && s[i] != c)
-		++i;
-	if (s[i] == c)
-		return ((char *)&s[i]);
-	return (NULL);
+	if (c >= 'A' && c <= 'Z')
+		return (1);
+	else if (c >= 'a' && c <= 'z')
+		return (1);
+	else
+		return (0);
 }

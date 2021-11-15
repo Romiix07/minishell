@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 17:27:27 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/03 22:59:03 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/09 17:56:00 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	check_exec(char **path)
 	return (-1);
 }
 
-int	check_function(void)
+int	check_function(int i)
 {
 	int	ret;
 
@@ -44,7 +44,11 @@ int	check_function(void)
 		if (g_shell->exec && g_shell->fct && g_shell->env)
 			ret = execve(g_shell->exec, g_shell->fct, g_shell->char_env);
 		if (ret == -1)
-			exit(-1);
+		{
+			return_error("minishell", g_shell->input[i],
+				"command not found", 0);
+			exit(127);
+		}
 	}
 	return (ret);
 }
@@ -62,7 +66,7 @@ int	is_builtin(int i)
 	return (0);
 }
 
-int	check_builtins(int i)
+int	check_builtins(int i, int *pipefd)
 {
 	g_shell->ret = -1;
 	if (!is_builtin(i))
@@ -74,7 +78,7 @@ int	check_builtins(int i)
 	else if (ft_strcmp(g_shell->input[i], "unset") == 0)
 		g_shell->ret = ft_unset();
 	else if (ft_strcmp(g_shell->input[i], "exit") == 0)
-		ft_exit();
+		ft_exit(pipefd);
 	if (g_shell->ret != -1)
 		return (g_shell->ret);
 	g_shell->cpid = fork();

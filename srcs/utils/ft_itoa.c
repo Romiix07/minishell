@@ -49,11 +49,15 @@ char	*ft_itoa(int nb)
 		nb /= 10;
 	}
 	else
-		ret = concatenate_str(ret, '0' + (nb / 10));
+	{
+		ret = concatenate_str(ret, '0' + (nb % 10));
+		return (ret);
+	}
 	while (nb > 9)
 	{
 		ret = pre_concatenate_str(ret, '0' + (nb % 10));
 		nb /= 10;
 	}
+	ret = pre_concatenate_str(ret, '0' + (nb % 10));
 	return (ret);
 }

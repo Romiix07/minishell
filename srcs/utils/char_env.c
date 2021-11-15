@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 17:27:50 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/10/28 15:35:32 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/10 17:17:41 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,11 @@ static char	*env_to_string(char *name, char *var)
 		return (0);
 	len = -1;
 	i = -1;
-	while (name[++len])
+	while (name && name[++len])
 		s[++i] = name[len];
 	len = -1;
 	s[++i] = '=';
-	while (var[++len])
+	while (var && var[++len])
 		s[++i] = var[len];
 	s[++i] = 0;
 	return (s);

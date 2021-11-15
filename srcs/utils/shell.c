@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/27 12:08:38 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/03 23:58:47 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/11 20:45:55 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ int	init_shell(char **env)
 	g_shell->tty[1] = -1;
 	g_shell->here_line = 0;
 	g_shell->ops = 0;
+	g_shell->cpid = 0;
 	if (!g_shell->env)
 	{
 		free_shell();

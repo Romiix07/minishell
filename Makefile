@@ -2,6 +2,7 @@ SRCS		=	srcs/main.c	\
 				srcs/utils/get_input.c	\
 				srcs/utils/free_tab.c	\
 				srcs/utils/ft_isalnum.c	\
+				srcs/utils/ft_isalpha.c	\
 				srcs/utils/ft_putstr.c	\
 				srcs/utils/ft_strlen.c	\
 				srcs/utils/ft_strlen_spec.c	\
@@ -13,9 +14,11 @@ SRCS		=	srcs/main.c	\
 				srcs/utils/ft_putnbr.c	\
 				srcs/utils/ft_strdupncpy.c	\
 				srcs/utils/words.c	\
+				srcs/utils/check_symbol.c	\
 				srcs/utils/go_to_function.c	\
 				srcs/utils/get_env.c	\
 				srcs/utils/free_items.c	\
+				srcs/utils/normal_word.c	\
 				srcs/utils/get_arg_tab.c	\
 				srcs/utils/error.c	\
 				srcs/utils/shell.c	\
@@ -31,7 +34,6 @@ SRCS		=	srcs/main.c	\
 				srcs/utils/here_doc.c	\
 				srcs/utils/get_word.c	\
 				srcs/utils/sighandle.c	\
-				srcs/utils/ft_strchr.c	\
 				srcs/utils/check_dollar.c	\
 				srcs/utils/ft_itoa.c	\
 				srcs/implementations/env.c	\
@@ -51,11 +53,9 @@ INCLUDES	=	-I./includes/
 
 NAME		=	minishell
 
-CFLAGS      =   
+CFLAGS      =   -Wall -Werror -Wextra
 
-CC			=	gcc -g -fsanitize=address
-
-TMP			=	gcc -g -fsanitize=address
+CC			=	gcc
 
 RM			=	rm -f
 

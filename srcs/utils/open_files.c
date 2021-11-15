@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 17:25:50 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/03 22:49:57 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/10 18:09:04 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,16 +100,15 @@ int	check_fctargs(char **input)
 	return (0);
 }
 
-int	get_and_open_file(char **input, int j)
+int	get_and_open_file(char **input, int j, int i)
 {
-	int	i;
-
-	i = -1;
-	if (j > 0 && ft_strcmp(input[-1], "|") == 0 && g_shell->ops[j - 1] < 2)
+	if (!check_symbol(input, j))
+		return (-2);
+	if (j > 0 && ft_strcmp(input[-1], "|") == 0 && g_shell->ops[j - 1] == 0)
 		g_shell->op |= READ_FROM;
 	while (input[++i])
 	{
-		if (ft_strcmp(input[i], "|") == 0 && g_shell->ops[j + i] < 2)
+		if (ft_strcmp(input[i], "|") == 0 && g_shell->ops[j + i] == 0)
 		{
 			g_shell->op |= WRITE_TO;
 			break ;
@@ -117,9 +116,9 @@ int	get_and_open_file(char **input, int j)
 	}
 	while (i > 0 && input[--i])
 	{
-		if (ft_strcmp(input[i], "<<") == 0 && g_shell->ops[j + i] < 2)
+		if (ft_strcmp(input[i], "<<") == 0 && g_shell->ops[j + i] == 0)
 			g_shell->op |= HERE_DOC;
-		if (g_shell->ops[j + i] < 2
+		if (g_shell->ops[j + i] == 0
 			&& (ft_strcmp(input[i], ">") == 0 || ft_strcmp(input[i], "<") == 0
 				|| ft_strcmp(input[i], ">>") == 0
 				|| ft_strcmp(input[i], "<<") == 0))

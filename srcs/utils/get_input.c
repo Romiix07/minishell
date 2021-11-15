@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/19 14:57:26 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/03 23:33:48 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/15 10:02:32 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,17 +61,25 @@ char	*concatenate_str(char *s, char c)
 static char	**modify_tab(char **tab)
 {
 	int	i;
+	int	j;
 
 	i = -1;
 	while (tab[++i])
 	{
-		if (g_shell->ops[i] == 0 && ft_strchr(tab[i], '$'))
+		j = 0;
+		if (g_shell->ops[i] < 2)
 		{
-			tab[i] = check_quote_dollar(tab[i], g_shell->env);
-			if (!tab[i])
+			while (tab[i][j] && tab[i][j] != '$')
+				++j;
+			if (tab[i][j] == '$' && tab[i][j + 1]
+				&& !is_charset(tab[i][j + 1], " \t"))
 			{
-				free_tab(tab, i);
-				return (0);
+				tab[i] = check_quote_dollar(tab[i], g_shell->env, -1);
+				if (!tab[i])
+				{
+					free_tab(tab, i);
+					return (0);
+				}
 			}
 		}
 	}
@@ -83,13 +91,15 @@ __int8_t	get_ops(char *s)
 	int			i;
 
 	i = 0;
+	if (s && *s == '"')
+		return (1);
 	if (s && *s != '\'')
 		return (0);
 	while (s[++i])
 	{
-		if (s[i] == '\'' && is_charset(s[i + 1], " \t"))
+		if (s[i] == '\'')
 			return (2);
-		else if (s[i] == '\'' && !is_charset(s[i + 1], " \t"))
+		else if (s[i] == '"')
 			return (1);
 	}
 	return (0);
@@ -97,14 +107,13 @@ __int8_t	get_ops(char *s)
 
 char	**get_input(void)
 {
-	int		i;
 	char	*s;
 	char	**tab;
 
 	s = 0;
 	s = readline("$ ");
 	if (!s)
-		ft_exit();
+		ft_exit(0);
 	if (temp_check(s) == 1)
 		add_history(s);
 	if (s && !get_amt_wd_1(s, 0, 0))

@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 20:03:59 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/03 20:26:35 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/10 18:59:01 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,22 @@
 
 static int	get_amt_words_2(int words, char **s)
 {
+	char	c;
+
 	if (**s && !is_charset(**s, "\t <>|"))
 	{
 		while (**s && !is_charset(**s, "\t <>|"))
-			++*s;
+		{
+			if (**s == '\'' || **s == '"')
+			{
+				c = **s;
+				++*s;
+				while (**s && **s != c)
+					++*s;
+			}
+			if (**s)
+				++*s;
+		}
 		++words;
 	}
 	else if (**s == ' ' || **s == '\t')
@@ -35,7 +47,7 @@ int	get_amt_wd_1(char *s, int words, char c)
 		{
 			c = *s;
 			++s;
-			while (*s && !is_charset(*s, "\t ") && (*s != c
+			while (*s && (*s != c
 					|| (*s == c && s + 1 && !is_charset(*(s + 1), " \t"))))
 				++s;
 			if (*s && *s == c)
@@ -67,20 +79,13 @@ static char	*get_word_2(char *s, int *index, int start)
 		c = s[*index];
 		while (s[*index] && s[*index] == c)
 		{
-			++*index;
+			++(*index);
 			++size;
 		}
-		ret = ft_strdupncpy(&s[start], size, 0);
+		ret = ft_strdupncpy(&s[start], size, 0, 0);
 	}
 	else if (!is_charset(s[*index], " \t<>|"))
-	{
-		while (s[*index] && !is_charset(s[*index], " \t<>|"))
-		{
-			++*index;
-			++size;
-		}
-		ret = ft_strdupncpy(&s[start], size, "\'\"");
-	}
+		ret = normal_word(s, index, start);
 	return (ret);
 }
 
@@ -91,22 +96,22 @@ char	*get_word_1(char *s, int *index, char c)
 	int		size;
 
 	while (s[*index] && is_charset(s[*index], "\t ") == 1)
-		++*index;
+		++(*index);
 	start = *index;
 	size = 0;
 	if (s[*index] == '\'' || s[*index] == '"')
 	{
 		c = s[*index];
-		++*index;
-		while (s[*index] && !is_charset(s[*index], " \t")
-			&& (s[*index] != c || (s[*index] == c && s[*index + 1]
+		++(*index);
+		while (s[*index] && (s[*index] != c || (s[*index] == c && s[*index + 1]
 					&& !is_charset(s[*index + 1], " \t"))))
 		{
-			++*index;
+			++(*index);
 			++size;
 		}
-		++*index;
-		ret = ft_strdupncpy(&s[start + 1], size, &c);
+		if (s[*index])
+			++(*index);
+		ret = ft_strdupncpy(&s[start + 1], size, 0, c);
 		return (ret);
 	}
 	ret = get_word_2(s, index, start);

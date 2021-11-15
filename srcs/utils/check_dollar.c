@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/02 10:41:23 by user42            #+#    #+#             */
-/*   Updated: 2021/11/03 23:29:15 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/09 14:48:01 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,29 +15,37 @@
 #include <unistd.h>
 #include "minishell.h"
 
-int	check_dollar(char *s, int *index, char **ret, t_env *env)
+int	check_dollar_3(char *str, char **ret)
 {
-	t_env	*tmp;
-	char	*str;
-	int		keep;
+	int	keep;
 
-	*index += 1;
-	tmp = env;
-	keep = *index;
-	str = 0;
-	while (s[keep])
+	if (str == 0)
 	{
-		if (s[keep] == '"' || s[keep] == '$')
-			break ;
+		*ret = concatenate_str(*ret, '$');
+		return (0);
+	}
+	if (ft_isalpha(str[0]) || str[0] == '_' || str[0] == '?')
+		return (1);
+	keep = 0;
+	*ret = concatenate_str(*ret, '$');
+	while (str[keep])
+	{
+		*ret = concatenate_str(*ret, str[keep]);
 		keep++;
 	}
-	while (*index < keep)
-	{
-		str = concatenate_str(str, s[*index]);
-		*index += 1;
-	}
-	*index -= 1;
+	free(str);
+	return (0);
+}
+
+int	check_dollar_2(char *str, char **ret, t_env *env)
+{
+	t_env	*tmp;
+	int		keep;
+
+	tmp = env;
 	keep = 0;
+	if (check_dollar_3(str, ret) == 0)
+		return (0);
 	while (tmp)
 	{
 		if (ft_strcmp(tmp->name, str) == 0)
@@ -47,14 +55,45 @@ int	check_dollar(char *s, int *index, char **ret, t_env *env)
 				*ret = concatenate_str(*ret, tmp->var[keep]);
 				keep++;
 			}
+			free(str);
 			return (1);
 		}
 		tmp = tmp->next;
 	}
+	free(str);
 	return (0);
 }
 
-char	*check_quote_dollar(char *s, t_env *env)
+int	check_dollar(char *s, int *index, char **ret, t_env *env)
+{
+	char	*str;
+	int		keep;
+
+	*index += 1;
+	keep = *index;
+	str = 0;
+	if (s[*index] == '$')
+	{
+		if (s[*index + 1])
+			*index -= 1;
+		return (0);
+	}
+	while (s[keep])
+	{
+		if (s[keep] == '"' || s[keep] == '$' || s[keep] == ' ')
+			break ;
+		keep++;
+	}
+	while (*index < keep)
+	{
+		str = concatenate_str(str, s[*index]);
+		*index += 1;
+	}
+	*index -= 1;
+	return (check_dollar_2(str, ret, env));
+}
+
+char	*check_quote_dollar(char *s, t_env *env, int keep)
 {
 	char	*ret;
 	char	*tmp;
@@ -69,11 +108,10 @@ char	*check_quote_dollar(char *s, t_env *env)
 			if (s[index + 1] == '?')
 			{
 				tmp = ft_itoa(g_shell->ret);
-				while (*tmp)
-				{
-					ret = concatenate_str(ret, *tmp);
-					*tmp++;
-				}
+				keep = -1;
+				while (tmp[++keep])
+					ret = concatenate_str(ret, tmp[keep]);
+				free(tmp);
 			}
 			check_dollar(s, &index, &ret, env);
 		}

@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 17:27:10 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/10/08 17:27:11 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/10 13:02:09 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ char	**get_path(char *name)
 		return (0);
 	i = -1;
 	amount = 0;
-	while (path[++i])
+	while (path && path[++i])
 		if (path[i] == ':')
 			++amount;
 	tab = malloc(sizeof(char *) * (amount + 3));
@@ -98,7 +98,7 @@ char	*get_env_var(char *s)
 	tmp = g_shell->env;
 	while (tmp)
 	{
-		if (ft_strcmp(tmp->name, s) == 0)
+		if (tmp->name && ft_strcmp(tmp->name, s) == 0)
 			return (tmp->var);
 		tmp = tmp->next;
 	}

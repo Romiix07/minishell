@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/25 15:30:23 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/10/28 15:41:13 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/10 17:16:03 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ t_env	*ft_envnew(char *s)
 	node->name = init_env_name(s);
 	if (!node->name)
 		free(node);
+	if (!s[ft_strlen_c(s, '=')])
+		return (node);
 	node->var = init_env_var(s);
 	if (!node->var)
 	{

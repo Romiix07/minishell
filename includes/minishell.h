@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 11:20:26 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/03 22:54:23 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/11 20:39:10 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ char		**get_input(void);
 char		**str_to_tab(char *s, t_env *env);
 
 int			ft_isalnum(int c);
+int			ft_isalpha(int c);
 int			ft_atoi(const char *str);
 int			ft_strlen(const char *s);
 int			ft_strlen_c(const char *s, char c);
@@ -71,9 +72,8 @@ int			ft_strlen_ischarset(const char *s, const char *charset);
 int			ft_strlen_isncharset(const char *s, const char *charset);
 int			ft_strcmp(const char *s1, const char *s2);
 int			ft_strncmp(const char *s1, const char *s2, size_t n);
-char		*ft_strchr(const char *s, int c);
 void		ft_putnbr_fd(int nb, int fd);
-char		*ft_strdupncpy(char *s, int len, char *ex);
+char		*ft_strdupncpy(char *s, int len, char *ex, char c);
 char		*ft_strdup(char const *src);
 int			is_charset(char c, const char *charset);
 void		*ft_calloc(void **ptr, int size);
@@ -85,7 +85,7 @@ char		*get_dollar(char **ret, char *s, int *i);
 void		ft_putstr(char *str);
 char		*get_same_char(char **ret, char *s, int *i, char c);
 int			quote_check(char *arg, int index);
-int			go_to_function(void);
+int			go_to_function(int i, int fd);
 t_env		*init_env(char **env);
 t_env		*ft_envnew(char *s);
 char		*get_env_var(char *s);
@@ -95,20 +95,22 @@ char		*init_env_var(char *s);
 void		free_node(t_env *node);
 int			print_env(t_env *env);
 char		**free_char_env(char **env, int i);
+char		*normal_word(char *s, int *index, int start);
 char		**dup_env(void);
 void		*free_items(void **item_1, int size_1, void **item_2, int size_2);
-char		**get_arg_tab(char **input, int j);
+char		**get_arg_tab(char **input, int j, int *fd);
 int			get_amt_wd_1(char *s, int words, char c);
 int			return_error(char *s1, char *s2, char *s3, int ret);
+int			check_symbol(char **input, int i);
 
 int			check_fctargs(char **input);
-int			check_function(void);
-int			check_builtins(int i);
+int			check_function(int i);
+int			check_builtins(int i, int *pipefd);
 int			check_exec(char **path);
 int			open_file(char *path, char *op, char *heredoc);
 
 int			ft_echo(char **arg);
-char		*check_quote_dollar(char *s, t_env *env);
+char		*check_quote_dollar(char *s, t_env *env, int keep);
 char		*ft_itoa(int nb);
 
 void		sighandler(int signum);
@@ -120,16 +122,16 @@ int			check_args(t_shell *shell, char **av);
 char		**get_path(char *name);
 int			free_path_tab(char **tab, int i);
 
-int			get_and_open_file(char **input, int i);
+int			get_and_open_file(char **input, int j, int i);
 int			ft_redirect(int fd, int *pipefd);
 int			fork_and_exec(int fd, int *pipefd, int i);
 void		reset_redirect(void);
 
-void		ft_exit(void);
+void		ft_exit(int *pipefd);
 int			ft_cd(void);
 
 int			*create_pipes(void);
-void		close_pipes(int *pipefd);
+int			close_pipes(int *pipefd);
 
 t_env		*create_env_node(char *name, char *var);
 void		del_env_node(t_env *env, char *name);
