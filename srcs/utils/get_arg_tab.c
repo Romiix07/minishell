@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 14:00:49 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/11 20:38:51 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/17 20:28:22 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,17 +49,23 @@ char	**get_arg_tab(char **input, int j, int *fd)
 	char	**arg_tab;
 	int		i;
 	int		size;
+	int		offset;
 
+	offset = -1;
+	if (input[0] && input[1] && !g_shell->ops[j] && (!ft_strcmp("<", input[0])
+			|| !ft_strcmp("<<", input[0]) || !ft_strcmp(">", input[0])
+			|| !ft_strcmp(">>", input[0])))
+		offset += 2;
 	if (pipe_check(input, j, fd) == -1)
 		return (0);
-	size = get_size_arg_tab(input, j);
+	size = get_size_arg_tab(&input[offset + 1], j);
 	if (size <= 0)
 		return (0);
 	if (!ft_calloc((void **)&arg_tab, sizeof(char *) * (size + 1)))
 		return (0);
 	i = -1;
-	while (++i < size)
-		arg_tab[i] = input[i];
+	while (++offset >= 0 && ++i < size)
+		arg_tab[i] = input[offset];
 	arg_tab[i] = 0;
 	return (arg_tab);
 }

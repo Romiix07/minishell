@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 17:27:27 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/09 17:56:00 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/17 20:30:12 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	check_function(int i)
 		if (ret == -1)
 		{
 			return_error("minishell", g_shell->input[i],
-				"command not found", 0);
+				" command not found", 0);
 			exit(127);
 		}
 	}

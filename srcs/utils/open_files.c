@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 17:25:50 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/10 18:09:04 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/17 20:25:49 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ int	get_and_open_file(char **input, int j, int i)
 			break ;
 		}
 	}
-	while (i > 0 && input[--i])
+	while (--i >= 0)
 	{
 		if (ft_strcmp(input[i], "<<") == 0 && g_shell->ops[j + i] == 0)
 			g_shell->op |= HERE_DOC;

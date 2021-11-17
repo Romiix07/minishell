@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/25 15:05:24 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/11 20:40:01 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/17 20:30:08 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ static char	*get_exec(char **input)
 	char	*exec;
 	int		index;
 
+	if (!input)
+		return (0);
 	exec = 0;
 	path = get_path(input[0]);
 	if (!path)
@@ -74,8 +76,8 @@ int	fork_and_exec(int fd, int *pipefd, int i)
 		{
 			if (!g_shell->exec || check_function(i) == -1)
 			{
-				return_error("minishell", g_shell->input[i],
-					"command not found", 0);
+				return_error("minishell", g_shell->fct[0],
+					" command not found", 0);
 			}
 		}
 	}
@@ -95,7 +97,7 @@ int	go_to_function(int i, int fd)
 	{
 		g_shell->fct = get_arg_tab(&g_shell->input[i], i, &fd);
 		g_shell->char_env = dup_env();
-		g_shell->exec = get_exec(&g_shell->input[i]);
+		g_shell->exec = get_exec(g_shell->fct);
 		fd = get_and_open_file(&g_shell->input[i], i, -1);
 		if (fd == -2)
 			return (reset() + close_pipes(pipefd));
