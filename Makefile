@@ -36,6 +36,7 @@ SRCS		=	srcs/main.c	\
 				srcs/utils/sighandle.c	\
 				srcs/utils/check_dollar.c	\
 				srcs/utils/ft_itoa.c	\
+				srcs/utils/wait_pids.c	\
 				srcs/implementations/env.c	\
 				srcs/implementations/echo.c	\
 				srcs/implementations/ft_exit.c	\
@@ -55,7 +56,7 @@ NAME		=	minishell
 
 CFLAGS      =   -Wall -Werror -Wextra
 
-CC			=	gcc
+CC			=	gcc -g -fsanitize=address
 
 RM			=	rm -f
 

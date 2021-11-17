@@ -6,19 +6,18 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/25 15:05:24 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/17 20:30:08 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/17 23:08:19 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <signal.h>
-#include <sys/wait.h>
 #include "minishell.h"
 
-static int	incr_i(char **input, int i, int fd)
+static int	incr_i(char **input, int i, int fd, int *pid_index)
 {
+	++(*pid_index);
 	if (fd == -2)
 		while (input[i])
 			++i;
@@ -43,6 +42,7 @@ static int	reset(void)
 	if (g_shell->char_env)
 		free_char_env(g_shell->char_env, -1);
 	g_shell->char_env = 0;
+	reset_redirect();
 	return (0);
 }
 
@@ -81,8 +81,6 @@ int	fork_and_exec(int fd, int *pipefd, int i)
 			}
 		}
 	}
-	reset_redirect();
-	waitpid(g_shell->cpid, &g_shell->waitstatus, 0);
 	return (0);
 }
 
@@ -91,14 +89,15 @@ int	go_to_function(int i, int fd)
 	int		*pipefd;
 
 	pipefd = create_pipes();
-	g_shell->tty[0] = dup(STDIN_FILENO);
-	g_shell->tty[1] = dup(STDOUT_FILENO);
+	g_shell->cpids = init_cpids(g_shell->pipes);
+	if (!pipefd || !g_shell->cpids)
+		return (1);
 	while (g_shell->input[i])
 	{
 		g_shell->fct = get_arg_tab(&g_shell->input[i], i, &fd);
 		g_shell->char_env = dup_env();
 		g_shell->exec = get_exec(g_shell->fct);
-		fd = get_and_open_file(&g_shell->input[i], i, -1);
+		fd = get_and_open_file(&g_shell->input[i], i, -1, pipefd);
 		if (fd == -2)
 			return (reset() + close_pipes(pipefd));
 		if (fd > -1 && g_shell->fct && g_shell->char_env)
@@ -107,9 +106,9 @@ int	go_to_function(int i, int fd)
 		if (!g_shell->exec)
 			g_shell->ret = 127;
 		reset();
-		i = incr_i(g_shell->input, i, fd);
+		i = incr_i(g_shell->input, i, fd, &g_shell->pid_index);
 	}
-	g_shell->index = 0;
+	wait_kill_pids();
 	close_pipes(pipefd);
 	return (g_shell->ret);
 }

@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 17:25:50 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/17 20:25:49 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/17 23:02:25 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	reset_redirect(void)
 int	ft_redirect(int fd, int *pipefd)
 {
 	if (g_shell->op & HERE_DOC)
-		here_doc(pipefd);
+		;
 	else if (g_shell->op & READ_FROM)
 		dup_close_set(pipefd[(g_shell->index - 1) * 2 + 0], STDIN_FILENO, -1);
 	else if (g_shell->index > 0)
@@ -48,12 +48,11 @@ int	ft_redirect(int fd, int *pipefd)
 	return (0);
 }
 
-int	open_file(char *path, char *op, char *heredoc)
+int	open_file(char *path, char *op)
 {
 	int	fd;
 
 	fd = 0;
-	g_shell->here_str = heredoc;
 	if (ft_strcmp(op, ">") == 0)
 	{
 		fd = open(path, OPEN_TRUNC, GIVE_RIGHTS);
@@ -90,7 +89,7 @@ int	check_fctargs(char **input)
 			|| ft_strcmp(input[i], ">") == 0
 			|| ft_strcmp(input[i], ">>") == 0)
 		{
-			fd = open_file(input[i + 1], input[i], 0);
+			fd = open_file(input[i + 1], input[i]);
 			if (fd == -1)
 				return (1);
 			else if (fd > 2)
@@ -100,7 +99,7 @@ int	check_fctargs(char **input)
 	return (0);
 }
 
-int	get_and_open_file(char **input, int j, int i)
+int	get_and_open_file(char **input, int j, int i, int *pipefd)
 {
 	if (!check_symbol(input, j))
 		return (-2);
@@ -117,12 +116,11 @@ int	get_and_open_file(char **input, int j, int i)
 	while (--i >= 0)
 	{
 		if (ft_strcmp(input[i], "<<") == 0 && g_shell->ops[j + i] == 0)
-			g_shell->op |= HERE_DOC;
+			return (here_doc(pipefd, input[i + 1]));
 		if (g_shell->ops[j + i] == 0
 			&& (ft_strcmp(input[i], ">") == 0 || ft_strcmp(input[i], "<") == 0
-				|| ft_strcmp(input[i], ">>") == 0
-				|| ft_strcmp(input[i], "<<") == 0))
-			return (open_file(input[i + 1], input[i], input[i + 1]));
+				|| ft_strcmp(input[i], ">>") == 0))
+			return (open_file(input[i + 1], input[i]));
 	}
 	return (0);
 }

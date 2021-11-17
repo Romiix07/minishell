@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/27 12:08:38 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/11 20:45:55 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/17 22:02:54 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ int	free_shell(void)
 		close(g_shell->tty[1]);
 	if (g_shell->ops)
 		free(g_shell->ops);
+	if (g_shell->cpids)
+		free(g_shell->cpids);
 	free(g_shell);
 	return (1);
 }
@@ -68,7 +70,8 @@ int	init_shell(char **env)
 	g_shell->tty[1] = -1;
 	g_shell->here_line = 0;
 	g_shell->ops = 0;
-	g_shell->cpid = 0;
+	g_shell->cpids = 0;
+	g_shell->pid_index = 0;
 	if (!g_shell->env)
 	{
 		free_shell();

@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 17:27:23 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/10 18:15:08 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/17 22:41:28 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ int	close_pipes(int *pipefd)
 {
 	int	i;
 
+	g_shell->index = 0;
 	i = -1;
 	while (pipefd && ++i < g_shell->pipes * 2)
 	{
@@ -34,6 +35,10 @@ int	close_pipes(int *pipefd)
 		close(g_shell->tty[1]);
 	g_shell->tty[0] = -1;
 	g_shell->tty[1] = -1;
+	if (g_shell->cpids)
+		free(g_shell->cpids);
+	g_shell->cpids = 0;
+	g_shell->pid_index = 0;
 	return (0);
 }
 
@@ -42,6 +47,8 @@ int	*create_pipes(void)
 	int	i;
 	int	*pipefd;
 
+	g_shell->tty[0] = dup(STDIN_FILENO);
+	g_shell->tty[1] = dup(STDOUT_FILENO);
 	g_shell->pipes = 1;
 	i = -1;
 	while (g_shell->input[++i])

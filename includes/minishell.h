@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 11:20:26 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/11 20:39:10 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/17 23:04:24 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ typedef struct s_shell {
 	char			**char_env;
 	char			**fct;
 	char			*exec;
-	char			*here_str;
 	__int8_t		*ops;
 	int				tty[2];
 	int				waitstatus;
@@ -49,7 +48,8 @@ typedef struct s_shell {
 	int				pipes;
 	int				index;
 	int				here_line;
-	__pid_t			cpid;
+	int				pid_index;
+	__pid_t			*cpids;
 }	t_shell;
 
 typedef struct s_echo {
@@ -102,12 +102,14 @@ char		**get_arg_tab(char **input, int j, int *fd);
 int			get_amt_wd_1(char *s, int words, char c);
 int			return_error(char *s1, char *s2, char *s3, int ret);
 int			check_symbol(char **input, int i);
+void		wait_kill_pids(void);
+__pid_t		*init_cpids(int amt);
 
 int			check_fctargs(char **input);
 int			check_function(int i);
 int			check_builtins(int i, int *pipefd);
 int			check_exec(char **path);
-int			open_file(char *path, char *op, char *heredoc);
+int			open_file(char *path, char *op);
 
 int			ft_echo(char **arg);
 char		*check_quote_dollar(char *s, t_env *env, int keep);
@@ -122,7 +124,7 @@ int			check_args(t_shell *shell, char **av);
 char		**get_path(char *name);
 int			free_path_tab(char **tab, int i);
 
-int			get_and_open_file(char **input, int j, int i);
+int			get_and_open_file(char **input, int j, int i, int *pipefd);
 int			ft_redirect(int fd, int *pipefd);
 int			fork_and_exec(int fd, int *pipefd, int i);
 void		reset_redirect(void);
@@ -148,7 +150,7 @@ int			ft_pwd(void);
 int			ft_export(void);
 void		print_env_export(char **env);
 
-int			here_doc(int *pipefd);
+int			here_doc(int *pipefd, char *heredoc);
 
 char		**str_to_tab_1(char *s);
 __int8_t	get_ops(char *s);

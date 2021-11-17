@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 17:27:27 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/17 20:30:12 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/17 22:08:31 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ int	check_function(int i)
 	int	ret;
 
 	ret = 0;
-	g_shell->cpid = fork();
-	if (g_shell->cpid == 0)
+	g_shell->cpids[g_shell->pid_index] = fork();
+	if (g_shell->cpids[g_shell->pid_index] == 0)
 	{
 		if (g_shell->exec && g_shell->fct && g_shell->env)
 			ret = execve(g_shell->exec, g_shell->fct, g_shell->char_env);
@@ -81,8 +81,8 @@ int	check_builtins(int i, int *pipefd)
 		ft_exit(pipefd);
 	if (g_shell->ret != -1)
 		return (g_shell->ret);
-	g_shell->cpid = fork();
-	if (g_shell->cpid == 0)
+	g_shell->cpids[g_shell->pid_index] = fork();
+	if (g_shell->cpids[g_shell->pid_index] == 0)
 	{
 		if (ft_strcmp(g_shell->input[i], "echo") == 0)
 			g_shell->ret = ft_echo(g_shell->fct + 1);
