@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/27 12:08:38 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/17 22:02:54 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/20 13:28:37 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ void	free_node(t_env *node)
 
 int	free_shell(void)
 {
+	int	i;
+
 	if (!g_shell)
 		return (0);
 	if (g_shell->env)
@@ -39,10 +41,10 @@ int	free_shell(void)
 		free(g_shell->exec);
 	if (g_shell->char_env)
 		free_char_env(g_shell->char_env, -1);
-	if (g_shell->tty[0] > 2)
-		close(g_shell->tty[0]);
-	if (g_shell->tty[1] > 2)
-		close(g_shell->tty[1]);
+	i = -1;
+	while (++i < 4)
+		if (g_shell->fds[i] > 2)
+			close(g_shell->fds[i]);
 	if (g_shell->ops)
 		free(g_shell->ops);
 	if (g_shell->cpids)
@@ -51,12 +53,27 @@ int	free_shell(void)
 	return (1);
 }
 
+static int	init_fds(void)
+{
+	g_shell->fds[STDIN] = dup(STDIN_FILENO);
+	if (g_shell->fds[STDIN] == -1)
+		return (-1);
+	g_shell->fds[STDOUT] = dup(STDOUT_FILENO);
+	if (g_shell->fds[STDOUT] == -1)
+		return (-1);
+	g_shell->fds[FDIN] = -1;
+	g_shell->fds[FDOUT] = -1;
+	return (0);
+}
+
 int	init_shell(char **env)
 {
 	g_shell = malloc(sizeof(t_shell));
 	if (!g_shell)
 		return (1);
 	g_shell->input = 0;
+	if (init_fds() == -1)
+		return (free_shell());
 	g_shell->env = init_env(env);
 	g_shell->char_env = 0;
 	g_shell->op = NONE;
@@ -66,8 +83,6 @@ int	init_shell(char **env)
 	g_shell->ret = 0;
 	g_shell->pipes = 0;
 	g_shell->index = 0;
-	g_shell->tty[0] = -1;
-	g_shell->tty[1] = -1;
 	g_shell->here_line = 0;
 	g_shell->ops = 0;
 	g_shell->cpids = 0;

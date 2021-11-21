@@ -3,15 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   check_dollar.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
+/*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/02 10:41:23 by user42            #+#    #+#             */
-/*   Updated: 2021/11/09 14:48:01 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/18 23:25:10 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include "minishell.h"
 
@@ -58,6 +58,8 @@ int	check_dollar_2(char *str, char **ret, t_env *env)
 			free(str);
 			return (1);
 		}
+		else
+			*ret = concatenate_str(*ret, '\0');
 		tmp = tmp->next;
 	}
 	free(str);
@@ -69,20 +71,20 @@ int	check_dollar(char *s, int *index, char **ret, t_env *env)
 	char	*str;
 	int		keep;
 
-	*index += 1;
 	keep = *index;
+	*index += 1;
 	str = 0;
 	if (s[*index] == '$')
 	{
 		if (s[*index + 1])
 			*index -= 1;
+		*ret = concatenate_str(*ret, '\0');
 		return (0);
 	}
-	while (s[keep])
+	while (s[++keep])
 	{
-		if (s[keep] == '"' || s[keep] == '$' || s[keep] == ' ')
+		if (!ft_isalnum(s[keep]) && s[keep] != '_')
 			break ;
-		keep++;
 	}
 	while (*index < keep)
 	{
@@ -93,27 +95,37 @@ int	check_dollar(char *s, int *index, char **ret, t_env *env)
 	return (check_dollar_2(str, ret, env));
 }
 
+int	check_intero(int *index, char **ret)
+{
+	char	*tmp;
+	int		keep;
+
+	tmp = ft_itoa(g_shell->ret);
+	keep = -1;
+	while (tmp[++keep])
+		*ret = concatenate_str(*ret, tmp[keep]);
+	free(tmp);
+	*index += 1;
+	return (0);
+}
+
 char	*check_quote_dollar(char *s, t_env *env, int keep)
 {
 	char	*ret;
-	char	*tmp;
 	int		index;
 
 	index = -1;
 	ret = 0;
+	if (keep)
+		ret = 0;
 	while (s[++index])
 	{
 		if (s[index] == '$')
 		{
 			if (s[index + 1] == '?')
-			{
-				tmp = ft_itoa(g_shell->ret);
-				keep = -1;
-				while (tmp[++keep])
-					ret = concatenate_str(ret, tmp[keep]);
-				free(tmp);
-			}
-			check_dollar(s, &index, &ret, env);
+				check_intero(&index, &ret);
+			else
+				check_dollar(s, &index, &ret, env);
 		}
 		else
 			ret = concatenate_str(ret, s[index]);

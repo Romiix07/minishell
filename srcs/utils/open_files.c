@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/08 17:25:50 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/17 23:02:25 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/21 22:15:56 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,41 +18,18 @@
 #include <sys/stat.h>
 #include "minishell.h"
 
-void	reset_redirect(void)
+static int	closeif(int *fd)
 {
-	dup2(g_shell->tty[0], STDIN_FILENO);
-	dup2(g_shell->tty[1], STDOUT_FILENO);
-}
-
-int	ft_redirect(int fd, int *pipefd)
-{
-	if (g_shell->op & HERE_DOC)
-		;
-	else if (g_shell->op & READ_FROM)
-		dup_close_set(pipefd[(g_shell->index - 1) * 2 + 0], STDIN_FILENO, -1);
-	else if (g_shell->index > 0)
+	if (fd && *fd > 2)
 	{
-		close(pipefd[(g_shell->index - 1) * 2 + 0]);
-		close(pipefd[(g_shell->index - 1) * 2 + 1]);
+		close(*fd);
+		*fd = -1;
 	}
-	if (g_shell->op & WRITE_TO)
-		dup_close_set(pipefd[g_shell->index * 2 + 1], STDOUT_FILENO, -1);
-	else
-		close(pipefd[g_shell->index * 2 + 1]);
-	if (g_shell->op & REDIRECT_TO)
-		dup2(fd, STDOUT_FILENO);
-	else if (g_shell->op & REDIRECT_FROM)
-		dup2(fd, STDIN_FILENO);
-	if (fd > 2)
-		close(fd);
 	return (0);
 }
 
-int	open_file(char *path, char *op)
+int	open_file(char *path, char *op, int fd)
 {
-	int	fd;
-
-	fd = 0;
 	if (ft_strcmp(op, ">") == 0)
 	{
 		fd = open(path, OPEN_TRUNC, GIVE_RIGHTS);
@@ -70,37 +47,20 @@ int	open_file(char *path, char *op)
 	}
 	if (fd == -1)
 	{
-		g_shell->op &= REDIRECT_FROM | REDIRECT_TO;
-		return_error("minishell", path, strerror(errno), -1);
+		if (g_shell->op & REDIRECT_FROM)
+			g_shell->op ^= REDIRECT_FROM;
+		else if (g_shell->op & REDIRECT_TO)
+			g_shell->op ^= REDIRECT_TO;
+		return (return_error("minishell", path, strerror(errno), -2));
 	}
 	return (fd);
 }
 
-int	check_fctargs(char **input)
+static int	check_pipe(char **input, int j)
 {
 	int	i;
-	int	fd;
 
 	i = -1;
-	while (input[++i])
-	{
-		fd = -1;
-		if (ft_strcmp(input[i], "<") == 0
-			|| ft_strcmp(input[i], ">") == 0
-			|| ft_strcmp(input[i], ">>") == 0)
-		{
-			fd = open_file(input[i + 1], input[i]);
-			if (fd == -1)
-				return (1);
-			else if (fd > 2)
-				close(fd);
-		}
-	}
-	return (0);
-}
-
-int	get_and_open_file(char **input, int j, int i, int *pipefd)
-{
 	if (!check_symbol(input, j))
 		return (-2);
 	if (j > 0 && ft_strcmp(input[-1], "|") == 0 && g_shell->ops[j - 1] == 0)
@@ -113,14 +73,31 @@ int	get_and_open_file(char **input, int j, int i, int *pipefd)
 			break ;
 		}
 	}
-	while (--i >= 0)
+	return (i);
+}
+
+int	get_and_open_file(char **input, int i, int *pipefd)
+{
+	int	max;
+	int	index;
+
+	max = check_pipe(input, i);
+	if (max == -2)
+		return (-2);
+	index = -1;
+	while (++index < max && input[index])
 	{
-		if (ft_strcmp(input[i], "<<") == 0 && g_shell->ops[j + i] == 0)
-			return (here_doc(pipefd, input[i + 1]));
-		if (g_shell->ops[j + i] == 0
-			&& (ft_strcmp(input[i], ">") == 0 || ft_strcmp(input[i], "<") == 0
-				|| ft_strcmp(input[i], ">>") == 0))
-			return (open_file(input[i + 1], input[i]));
+		if (!g_shell->ops[i + index] && !ft_strcmp(input[index], "<"))
+			g_shell->fds[FDIN] = closeif(&g_shell->fds[FDIN])
+				+ open_file(input[index + 1], input[index], -1);
+		else if (!g_shell->ops[i + index] && !ft_strcmp(input[index], "<<"))
+			g_shell->fds[FDIN] = here_doc(pipefd, input[index + 1]);
+		else if (!g_shell->ops[i + index] && (!ft_strcmp(input[index], ">")
+				|| !ft_strcmp(input[index], ">>")))
+			g_shell->fds[FDOUT] = closeif(&g_shell->fds[FDOUT])
+				+ open_file(input[index + 1], input[index], -1);
+		if (g_shell->fds[FDIN] == -2 || g_shell->fds[FDOUT] == -2)
+			return (-1);
 	}
 	return (0);
 }

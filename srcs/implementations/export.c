@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/28 13:39:15 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/10 17:23:32 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/18 10:41:29 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,8 @@ int	ft_export(void)
 		len = -1;
 		ret = 0;
 		while (g_shell->fct[++len + 1])
-			if (export_val(g_shell->fct[len + 1], -1) == 1)
+			if (!get_env_node(g_shell->fct[len + 1])
+				&& export_val(g_shell->fct[len + 1], -1) == 1)
 				ret = 1;
 		return (ret);
 	}

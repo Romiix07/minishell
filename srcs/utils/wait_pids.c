@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 22:23:08 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/17 22:34:19 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/19 14:14:33 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,17 @@ __pid_t	*init_cpids(int amt)
 	return (cpids);
 }
 
-void	wait_kill_pids(void)
+int	wait_kill_pids(void)
 {
 	int	i;
 
-	waitpid(g_shell->cpids[g_shell->pipes - 1], &g_shell->waitstatus, 0);
+	if (g_shell->cpids && g_shell->cpids[g_shell->pipes - 1] > 1)
+		waitpid(g_shell->cpids[g_shell->pipes - 1], &g_shell->waitstatus, 0);
 	i = -1;
 	while (++i < g_shell->pipes - 1)
-		if (g_shell->cpids[i] > 1)
+		if (g_shell->cpids && g_shell->cpids[i] > 1)
 			kill(g_shell->cpids[i], SIGPIPE);
+	if (g_shell->ret != 127)
+		g_shell->ret = WEXITSTATUS(g_shell->waitstatus);
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 11:20:26 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/17 23:04:24 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/20 17:44:21 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,11 @@
 # define OPEN_TRUNC 577
 # define GIVE_RIGHTS 0664
 
+# define STDIN 0
+# define STDOUT 1
+# define FDIN 2
+# define FDOUT 3
+
 typedef struct s_env {
 	char			*name;
 	char			*var;
@@ -41,13 +46,14 @@ typedef struct s_shell {
 	char			**fct;
 	char			*exec;
 	__int8_t		*ops;
-	int				tty[2];
+	int				fds[4];
 	int				waitstatus;
 	char			op;
 	int				ret;
 	int				pipes;
 	int				index;
 	int				here_line;
+	int				here_fd;
 	int				pid_index;
 	__pid_t			*cpids;
 }	t_shell;
@@ -102,14 +108,13 @@ char		**get_arg_tab(char **input, int j, int *fd);
 int			get_amt_wd_1(char *s, int words, char c);
 int			return_error(char *s1, char *s2, char *s3, int ret);
 int			check_symbol(char **input, int i);
-void		wait_kill_pids(void);
+int			wait_kill_pids(void);
 __pid_t		*init_cpids(int amt);
 
-int			check_fctargs(char **input);
 int			check_function(int i);
 int			check_builtins(int i, int *pipefd);
 int			check_exec(char **path);
-int			open_file(char *path, char *op);
+int			open_file(char *path, char *op, int fd);
 
 int			ft_echo(char **arg);
 char		*check_quote_dollar(char *s, t_env *env, int keep);
@@ -124,9 +129,9 @@ int			check_args(t_shell *shell, char **av);
 char		**get_path(char *name);
 int			free_path_tab(char **tab, int i);
 
-int			get_and_open_file(char **input, int j, int i, int *pipefd);
-int			ft_redirect(int fd, int *pipefd);
-int			fork_and_exec(int fd, int *pipefd, int i);
+int			get_and_open_file(char **input, int i, int *pipefd);
+int			ft_redirect(int *pipefd);
+int			fork_and_exec(int *pipefd, int i);
 void		reset_redirect(void);
 
 void		ft_exit(int *pipefd);

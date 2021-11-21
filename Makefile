@@ -22,6 +22,7 @@ SRCS		=	srcs/main.c	\
 				srcs/utils/get_arg_tab.c	\
 				srcs/utils/error.c	\
 				srcs/utils/shell.c	\
+				srcs/utils/redirect.c	\
 				srcs/utils/is_charset.c	\
 				srcs/utils/quote_checks.c	\
 				srcs/utils/get_env_var.c	\

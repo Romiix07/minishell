@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/25 15:05:24 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/17 23:08:19 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/20 17:37:18 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,15 @@ static int	incr_i(char **input, int i, int fd, int *pid_index)
 	return (i);
 }
 
-static int	reset(void)
+static int	reset(int *pipefd)
 {
+	close(pipefd[g_shell->index * 2 + 1]);
+	if (g_shell->fds[FDIN] > 2)
+		close(g_shell->fds[FDIN]);
+	if (g_shell->fds[FDOUT] > 2)
+		close(g_shell->fds[FDOUT]);
+	g_shell->fds[FDIN] = -1;
+	g_shell->fds[FDOUT] = -1;
 	g_shell->waitstatus = 0;
 	g_shell->op = 0;
 	if (g_shell->fct)
@@ -68,23 +75,23 @@ static char	*get_exec(char **input)
 	return (exec);
 }
 
-int	fork_and_exec(int fd, int *pipefd, int i)
+int	fork_and_exec(int *pipefd, int i)
 {
-	if (ft_redirect(fd, pipefd) == 0)
+	if (ft_redirect(pipefd) == 0)
 	{
 		if (!is_builtin(i) || check_builtins(i, pipefd) == -1)
 		{
 			if (!g_shell->exec || check_function(i) == -1)
 			{
 				return_error("minishell", g_shell->fct[0],
-					" command not found", 0);
+					"command not found", 0);
 			}
 		}
 	}
 	return (0);
 }
 
-int	go_to_function(int i, int fd)
+int	go_to_function(int i, int ret)
 {
 	int		*pipefd;
 
@@ -94,19 +101,18 @@ int	go_to_function(int i, int fd)
 		return (1);
 	while (g_shell->input[i])
 	{
-		g_shell->fct = get_arg_tab(&g_shell->input[i], i, &fd);
+		g_shell->fct = get_arg_tab(&g_shell->input[i], i, &ret);
 		g_shell->char_env = dup_env();
 		g_shell->exec = get_exec(g_shell->fct);
-		fd = get_and_open_file(&g_shell->input[i], i, -1, pipefd);
-		if (fd == -2)
-			return (reset() + close_pipes(pipefd));
-		if (fd > -1 && g_shell->fct && g_shell->char_env)
-			fork_and_exec(fd, (int *)pipefd, i);
-		g_shell->ret = WEXITSTATUS(g_shell->waitstatus);
+		ret = get_and_open_file(&g_shell->input[i], i, pipefd);
+		if (ret == -2)
+			return (reset(pipefd) + close_pipes(pipefd) + wait_kill_pids());
+		if (ret > -1 && g_shell->fct && g_shell->char_env)
+			fork_and_exec(pipefd, i);
 		if (!g_shell->exec)
 			g_shell->ret = 127;
-		reset();
-		i = incr_i(g_shell->input, i, fd, &g_shell->pid_index);
+		reset(pipefd);
+		i = incr_i(g_shell->input, i, ret, &g_shell->pid_index);
 	}
 	wait_kill_pids();
 	close_pipes(pipefd);
