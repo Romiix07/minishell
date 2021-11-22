@@ -12,6 +12,7 @@ SRCS		=	srcs/main.c	\
 				srcs/utils/ft_strdup.c	\
 				srcs/utils/ft_atoi.c	\
 				srcs/utils/ft_putnbr.c	\
+				srcs/utils/ft_strcpy.c	\
 				srcs/utils/ft_strdupncpy.c	\
 				srcs/utils/words.c	\
 				srcs/utils/check_symbol.c	\
@@ -38,6 +39,7 @@ SRCS		=	srcs/main.c	\
 				srcs/utils/check_dollar.c	\
 				srcs/utils/ft_itoa.c	\
 				srcs/utils/wait_pids.c	\
+				srcs/utils/replace_env_var.c	\
 				srcs/implementations/env.c	\
 				srcs/implementations/echo.c	\
 				srcs/implementations/ft_exit.c	\

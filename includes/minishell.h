@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 11:20:26 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/20 17:44:21 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/22 15:03:28 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ int			ft_strlen_isncharset(const char *s, const char *charset);
 int			ft_strcmp(const char *s1, const char *s2);
 int			ft_strncmp(const char *s1, const char *s2, size_t n);
 void		ft_putnbr_fd(int nb, int fd);
+char		*ft_strcpy(char *dest, char *src);
 char		*ft_strdupncpy(char *s, int len, char *ex, char c);
 char		*ft_strdup(char const *src);
 int			is_charset(char c, const char *charset);
@@ -109,6 +110,7 @@ int			get_amt_wd_1(char *s, int words, char c);
 int			return_error(char *s1, char *s2, char *s3, int ret);
 int			check_symbol(char **input, int i);
 int			wait_kill_pids(void);
+char		*replace_env_var(char *str);
 __pid_t		*init_cpids(int amt);
 
 int			check_function(int i);

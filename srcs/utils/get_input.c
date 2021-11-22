@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/19 14:57:26 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/22 11:55:45 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/22 15:03:43 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ char	*concatenate_str(char *s, char c)
 	return (ret);
 }
 
-static char	**modify_tab(char **tab)
+__attribute__((unused))static char	**modify_tab(char **tab)
 {
 	int	i;
 	int	j;
@@ -124,7 +124,9 @@ char	**get_input(void)
 	g_shell->ops = malloc(sizeof(__int8_t) * get_amt_wd_1(s, 0, 0));
 	if (!g_shell->ops)
 		return (0);
-	// s = replace_env_var(s);
+	s = replace_env_var(s);
+	if (!s)
+		return ((char **)(unsigned long)return_error("Cant get s", 0, 0, 0));
 	tab = str_to_tab_1(s);
 	if (!tab)
 		return_error("minishell: Can't malloc tab", 0, 0, 0);
