@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/19 14:57:26 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/23 12:01:33 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/23 12:35:17 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,14 +116,15 @@ char	**get_input(void)
 		ft_exit(0);
 	if (temp_check(s) == 1)
 		add_history(s);
+	s = replace_env_var(s);
+	if (!s)
+		return ((char **)(unsigned long)return_error("Cant get s", 0, 0, 0));
+	printf("s = %s\n", s);
 	if (s && !get_amt_wd_1(s, 0, 0))
 	{
 		free(s);
 		return (0);
 	}
-	s = replace_env_var(s);
-	if (!s)
-		return ((char **)(unsigned long)return_error("Cant get s", 0, 0, 0));
 	g_shell->ops = malloc(sizeof(__int8_t) * get_amt_wd_1(s, 0, 0));
 	if (!g_shell->ops)
 		return (0);

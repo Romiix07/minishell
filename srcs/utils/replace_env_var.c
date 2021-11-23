@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/22 11:56:26 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/23 12:06:05 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/23 12:11:53 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,12 +122,15 @@ char	*replace_env_var(char *str)
 
 	newstr = NULL;
 	len = get_strenv_len(str, -1, 0, 0);
-	if (len)
-		newstr = malloc(sizeof(char) * (len + 1));
-	newstr[len] = 0;
+	newstr = malloc(sizeof(char) * (len + 1));
 	if (!newstr)
+	{
+		free(str);
 		return (0);
-	newstr = loop_replace(newstr, str, tmp, -1);
+	}
+	newstr[len] = 0;
+	if (len > 0)
+		newstr = loop_replace(newstr, str, tmp, -1);
 	free(str);
 	return (newstr);
 }
