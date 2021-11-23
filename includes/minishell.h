@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/20 11:20:26 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/22 15:03:28 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/23 11:27:42 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,9 @@ int			check_symbol(char **input, int i);
 int			wait_kill_pids(void);
 char		*replace_env_var(char *str);
 __pid_t		*init_cpids(int amt);
+char		*env_input(char *name, char str[256]);
+char		*select_env_var(char *s, char str[256]);
+char		*get_var_name(char *s, char name[256]);
 
 int			check_function(int i);
 int			check_builtins(int i, int *pipefd);

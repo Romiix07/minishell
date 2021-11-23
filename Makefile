@@ -21,6 +21,7 @@ SRCS		=	srcs/main.c	\
 				srcs/utils/free_items.c	\
 				srcs/utils/normal_word.c	\
 				srcs/utils/get_arg_tab.c	\
+				srcs/utils/env_input.c	\
 				srcs/utils/error.c	\
 				srcs/utils/shell.c	\
 				srcs/utils/redirect.c	\
@@ -59,7 +60,7 @@ NAME		=	minishell
 
 CFLAGS      =   -Wall -Werror -Wextra
 
-CC			=	gcc
+CC			=	gcc -g -fsanitize=address
 
 RM			=	rm -f
 
