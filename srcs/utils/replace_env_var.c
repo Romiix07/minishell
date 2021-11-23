@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/22 11:56:26 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/23 12:11:53 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/23 12:53:14 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ char	*get_var_name(char *s, char name[256])
 
 	if (!s || *s != '$')
 		return (0);
+	if (!ft_strncmp(s, "$?", 2))
+		return ("?");
 	i = 1;
 	if (!ft_isalpha(s[i]) && s[i] != '_')
 		return (0);

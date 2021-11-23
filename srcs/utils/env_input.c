@@ -6,7 +6,7 @@
 /*   By: rmouduri <rmouduri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/23 11:09:16 by rmouduri          #+#    #+#             */
-/*   Updated: 2021/11/23 11:54:23 by rmouduri         ###   ########.fr       */
+/*   Updated: 2021/11/23 12:51:28 by rmouduri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,12 @@ char	*env_input(char *name, char str[256])
 	char	*s;
 
 	if (!name || name[0] != '$' || (name[0] == '$'
-			&& name[1] != '_' && !ft_isalpha(name[1])))
+			&& name[1] != '_' && !ft_isalpha(name[1]) && name[1] != '?'))
 		return (0);
 	s = NULL;
-	if (get_env_var(get_var_name(name, str)))
+	if (ft_strncmp(name, "$?", 2) == 0)
+		s = select_env_var(name, str);
+	else if (get_env_var(get_var_name(name, str)))
 		s = select_env_var(name, str);
 	if (s != NULL)
 		return (s);
